@@ -1,11 +1,11 @@
 {
   "name": "caf_security",
   "description": "Cloud Assistants security lib",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "author": "Antonio Lain <antlai@cafjs.com>",
   "dependencies": {
-      "caf_core" : ">= 0.0.1",
-      "caf_cli" : ">= 0.0.1",
+      "caf_core" : "^0.1",
+      "caf_cli" : "^0.1",
       "passport" : ">= 0.1.12",
       "password-hash" : ">= 1.2.1"
   },
