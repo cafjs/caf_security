@@ -6,6 +6,9 @@ See http://www.cafjs.com
 
 ## CAF Lib Security
 
+[![Build Status](http://ci.cafjs.com/github.com/cafjs/caf_security/status.svg?branch=master)](http://ci.cafjs.com/github.com/cafjs/caf_security)
+
+
 This repository contains a CAF lib to add security checks.
 
 
