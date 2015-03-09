@@ -20,61 +20,54 @@ This repository contains a CAF lib to add security checks.
        "plugs": [
         {
             "module": "caf_security/plug",
-            "name": "security_mux",
-            "description": "Authenticates requests\n Properties: <strategy> Name for the authentication mechanism \n <tokenKey> Secret to sign tokens \n <tokenExpires> Validity in seconds of a token\n <users> username/hashed passwords for valid users\n",
+            "name": "security",
+            "description": "Authenticates requests\n Properties: <keysDir> Directory with key material, defaults to colocated with ca_methods.js (i.e., <app_root>/lib). \n<serviceURL> External service to create tokens. \n <trustedPubKeyFile> Trusted public key to verify signed tokens. \n <privateKeyFile> Optional private key to sign tokens. \n <pubKeyFile> Optional public key for signing key. \n <unrestricted> True, if this application requires a token that can be used with other applications.\n <appPublisher> Name of the app publisher.\n <appLocalName> Local name app given by the app publisher.\n <allowNobodyUser> Enable the user 'nobody' to bypass authentication",
             "env": {
-                "strategy" : {
-                    "local":  {
-                        "tokenExpires" : 50000,
-                        "tokenKey" : "pleasechange",
-                        "users" : {
-                            "antonio" : "sha1$c414d4b2$1$9920e4c8d3d8a7f1db37867e55240e2dfa482c26",
-                            "john" :"sha1$3f1d4cdf$1$a33427e0ebb54df43e365d6effc55c1683f142e6"
-                        }
-                    },
-                    "accounts": {
-                        "serviceUrl" : "http://accounts.cafjs.com/app.html",
-                        "pubFile" : "rsa_pub.pem",
-                        "unrestricted" : false
+                        "keysDir": null,
+                        "serviceUrl" : "https://accounts.cafjs.com/app.html",
+                        "trustedPubKeyFile" : "trusted_pub.pem",
+                        "privateKeyFile": null,
+                        "publicKeyFile" : null,
+                        "unrestricted" : false,
+                        "appPublisher" : "d41d8cd98a00b204e9700988ecf8427e",
+                        "appLocalName" : "myApp",
+                        "allowNobodyUser" : false
+                        
                     }
                 }
             }
         }
         
         
-In the example above we enable two authentication policies:
+The above example uses an external authentication service that signs tokens with an asymmetric key (RSA). The file `trustedPubKeyFile` (in the same directory as `ca_methods.js` or absolute path) contains the service public key (self-signed certificate in PEM format, see `openssl`).
 
-*  *local* Insecure, use only for debugging. It uses a shared key to encrypt tokens that all apps should know. We add password hashes of users using `nodepw` in the npm package  `password-hash`.
+Instead, if this plug can sign tokens on its own, the `serviceURL` is `null` and the files `privateKeyFile` and `pubKeyFile` provide the asymmetric key.
 
-*  *accounts* Uses an external authentication service that signs tokens with an asymmetric key (RSA). The file `rsa_pub.pem` (in the same directory as `framework.json`) contains the service public key (self-signed certificate in PEM format, see `openssl`). The property `unrestricted` is a suggestion that this app needs a token that can be used to authenticate to any application; the end user is prompted to confirm  this request, and should only grant it for trusted apps.
+The property `unrestricted` is a suggestion that this app needs a token that can be used to authenticate to any application; the end user is prompted to confirm  this request, and should only grant it for trusted apps.
     
 
 ### ca.json
 
-    "internal" : [
-        {
-            "module": "caf_security/plug_ca",
-            "name": "security_ca",
-            "description": "Authorization checks for this CA",
-            "env" : {
 
-            }
-        }
-        ...
-     ]
-     "proxies" : [
-       {
-            "module": "caf_security/proxy",
+    {
+            "module": "caf_security#plug_ca",
             "name": "security",
-            "description": "Proxy to security services for this CA",
+            "description": "Authorization checks for this CA".",
             "env" : {
-
-            }
-        }
-        ...
-      ]
-  
-  
+                "maxRetries" : "$._.env.maxRetries",
+                "retryDelay" : "$._.env.retryDelay"
+            },
+            "components" : [
+                {
+                    "module": "caf_security#proxy",
+                    "name": "proxy",
+                    "description": "Proxy to security services for this CA",
+                    "env" : {
+                          ...
+                    }
+                }
+            ]
+    }
     
         
             
