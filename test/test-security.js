@@ -1,5 +1,6 @@
-var async = require('async');
+
 var caf_comp = require('caf_components');
+var async = caf_comp.async;
 var myUtils = caf_comp.myUtils;
 var json_rpc = require('caf_transport').json_rpc;
 var fs = require('fs');
