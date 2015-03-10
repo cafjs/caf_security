@@ -503,7 +503,7 @@ module.exports = {
     },
     caAuthorization:  function (test) {
         var self = this;
-        test.expect(11);
+        test.expect(13);
         var s1;
         var s2;
         var token1 = tokens.newPayload(APP_PUBLISHER_PUB_1,
@@ -544,6 +544,21 @@ module.exports = {
                         cb(null, null);
                     };
                 },
+                // check only owners can create CAs
+                function(res, cb) {
+                    s2 = new cli.Session('ws://foo.vcap.me:3000', from2, {
+                                             token : tk1,
+                                             from : from1
+                                         });
+                    s2.onclose = function(err) {
+                        console.log(err);
+                        test.ok(json_rpc.isSystemError(err));
+                        test.equal(json_rpc.getSystemErrorCode(err),
+                                   json_rpc.ERROR_CODES.notAuthorized);
+                        cb(null, null);
+                    };
+                },
+
                 function(res, cb) {
                     s1.allow(null,  CA_OWNER_2, CA_LOCAL_NAME_2, cb);
                 },
