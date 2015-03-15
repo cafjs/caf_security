@@ -8,6 +8,8 @@ var path = require('path');
 var caf_security = require('../index.js');
 var tokens = caf_security.tokens;
 var rules = caf_security.rules;
+var srp = caf_security.srp;
+
 var cli = require('caf_cli');
 
 
@@ -16,9 +18,7 @@ var app = hello;
 
 var HOST='localhost';
 var PORT=3000;
-
-
-var privKey1 = fs.readFileSync(path.resolve(__dirname,
+ privKey1 = fs.readFileSync(path.resolve(__dirname,
                                             'hello/dummy1PrivKey.key'));
 var privKey2 = fs.readFileSync(path.resolve(__dirname,
                                             'hello/dummy2PrivKey.key'));
@@ -46,6 +46,8 @@ var BAD_APP_PUBLISHER = 'some$one';
 var APP_PUBLISHER_PUB_1 = "F1CD0B760DCEE7DE770249F4512A9D0A";
 var APP_PUBLISHER_PUB_NAME_1 = "myApp";
 
+var PASSWD1 = 'foo';
+var PASSWD2 = 'bar';
 
 process.on('uncaughtException', function (err) {
                console.log("Uncaught Exception: " + err);
@@ -79,6 +81,7 @@ module.exports = {
             this.$.top.__ca_graceful_shutdown__(null, cb);
         }
     },
+
     helloworld: function (test) {
         var self = this;
         test.expect(13);
@@ -617,6 +620,68 @@ module.exports = {
                 test.ifError(err);
                 test.done();
             });
-    }
+    },
+    srp: function(test) {
+        var self = this;
+        test.expect(7);
+        var p1 = tokens.newPayload(APP_PUBLISHER_PUB_1,
+                                   APP_PUBLISHER_PUB_NAME_1,
+                                   CA_OWNER_1, CA_LOCAL_NAME_1, 100000);
+        var p2 = tokens.newPayload(null, null, CA_OWNER_1, null, 100000);
 
+        var p1Bad = tokens.newPayload(APP_PUBLISHER_PUB_1,
+                                      APP_PUBLISHER_PUB_NAME_1,
+                                      CA_OWNER_2, CA_LOCAL_NAME_1, 100000);
+        var transmit = function(x) {
+            return JSON.parse(JSON.stringify(x));
+        };
+
+        // create account
+        var client = srp.clientInstance(CA_OWNER_1, PASSWD1);
+        var accounts = {};
+        var server = srp.serverInstance(accounts, privKey1, pubKey1);
+        var newAcc = client.newAccount();
+        server.newAccount(transmit(newAcc));
+        test.ok(accounts[CA_OWNER_1]);
+        // duplicate
+        test.throws(function() {  server.newAccount(transmit(newAcc));});
+
+        // get token
+        var user = client.hello();
+        var helloReply = transmit(server.hello(transmit(user).username));
+        var loginReply = transmit(client.login(helloReply.saltHex,
+                                               helloReply.valueBHex, p1));
+        var tokenReply = transmit(server.newToken(loginReply.valueAHex,
+                                                loginReply.valueM1Hex,
+                                                loginReply.tokenConstr));
+        test.throws(function() {server.newToken(loginReply.valueAHex,
+                                                loginReply.valueM1Hex,
+                                                p1Bad);});
+        var tokenStr = client.newToken(tokenReply.tokenEnc, pubKey1, p1);
+        console.log(tokenStr);
+        var tok = tokens.validate(tokenStr, pubKey1);
+        test.ok(tokens.similar(tok, p1, true));
+        test.throws(function() {client.newToken(tokenReply.tokenEnc, pubKey1,
+                                                p2);});
+
+        // bad password
+        client = srp.clientInstance(CA_OWNER_1, PASSWD2);
+        user = client.hello();
+        helloReply = server.hello(user.username);
+        loginReply = client.login(helloReply.saltHex, helloReply.valueBHex, p1);
+        test.throws(function() {
+                        server.newToken(loginReply.valueAHex,
+                                        loginReply.valueM1Hex,
+                                        loginReply.tokenConstr);
+                    });
+
+        // bad username
+        client = srp.clientInstance(CA_OWNER_2, PASSWD1);
+        user = client.hello();
+        test.throws(function() { server.hello(user.username);});
+
+        test.done();
+
+
+    }
 };
