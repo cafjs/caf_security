@@ -648,37 +648,28 @@ module.exports = {
 
         // get token
         var user = client.hello();
-        var helloReply = transmit(server.hello(transmit(user).username));
-        var loginReply = transmit(client.login(helloReply.saltHex,
-                                               helloReply.valueBHex, p1));
-        var tokenReply = transmit(server.newToken(loginReply.valueAHex,
-                                                loginReply.valueM1Hex,
-                                                loginReply.tokenConstr));
-        test.throws(function() {server.newToken(loginReply.valueAHex,
-                                                loginReply.valueM1Hex,
-                                                p1Bad);});
-        var tokenStr = client.newToken(tokenReply.tokenEnc, pubKey1, p1);
+        var helloReply = transmit(server.hello(transmit(user)));
+        var loginReply = transmit(client.login(helloReply));
+        var tokenReply = transmit(server.newToken(loginReply, p1));
+        test.throws(function() {server.newToken(loginReply, p1Bad);});
+
+        var tokenStr = client.newToken(tokenReply, p1);
         console.log(tokenStr);
         var tok = tokens.validate(tokenStr, pubKey1);
         test.ok(tokens.similar(tok, p1, true));
-        test.throws(function() {client.newToken(tokenReply.tokenEnc, pubKey1,
-                                                p2);});
+        test.throws(function() {client.newToken(tokenReply, p2);});
 
         // bad password
         client = srp.clientInstance(CA_OWNER_1, PASSWD2);
         user = client.hello();
-        helloReply = server.hello(user.username);
-        loginReply = client.login(helloReply.saltHex, helloReply.valueBHex, p1);
-        test.throws(function() {
-                        server.newToken(loginReply.valueAHex,
-                                        loginReply.valueM1Hex,
-                                        loginReply.tokenConstr);
-                    });
+        helloReply = server.hello(user);
+        loginReply = client.login(helloReply);
+        test.throws(function() { server.newToken(loginReply, p1); });
 
         // bad username
         client = srp.clientInstance(CA_OWNER_2, PASSWD1);
         user = client.hello();
-        test.throws(function() { server.hello(user.username);});
+        test.throws(function() { server.hello(user);});
 
         test.done();
 
