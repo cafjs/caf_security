@@ -1,18 +1,23 @@
 {
     "name": "caf_security",
     "description": "Cloud Assistants security lib",
-    "version": "0.2.4",
+    "version": "0.2.5",
     "author": "Antonio Lain <antlai@cafjs.com>",
     "dependencies": {
         "caf_components" : "^0.2.0",
         "jsonwebtoken" : "^3.2.2",
         "caf_cli" : "^0.2.0",
-        "srp" : "^0.2.0"
+        "srp" : "^0.2.0",
+        "async" : ">=0.1.9"
     },
     "devDependencies": {
         "nodeunit" : ">=0.9",
         "caf_core" : "^0.2.0",
-        "caf_transport" : "^0.2.0"
+        "caf_transport" : "^0.2.0",
+        "jwt-decode" : "^1.1.0",
+        "browserify-bignum" : "^1.3.0",
+        "aliasify": "^1.7.2",
+        "browserify": "^9.0.3"
     },
     "main": "index",
     "homepage": "http://www.cafjs.com",
@@ -22,6 +27,20 @@
     },
     "scripts": {
         "test": "node ./node_modules/.bin/nodeunit"
+    },
+    "browserify": {
+        "transform": [
+            "aliasify"
+        ]
+    },
+    "browser": {
+        "./lib/main.js": "./lib/main-shim.js",
+        "./lib/srpUtils.js": "./lib/srpUtils-shim.js"
+    },
+    "aliasify": {
+        "aliases" : {
+            "bignum": "browserify-bignum"
+        }
     },
     "engines": { "node": ">= 0.10.29 " }
 }
