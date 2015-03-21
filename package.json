@@ -1,24 +1,19 @@
 {
     "name": "caf_security",
     "description": "Cloud Assistants security lib",
-    "version": "0.2.6",
+    "version": "0.2.8",
     "author": "Antonio Lain <antlai@cafjs.com>",
     "dependencies": {
         "caf_components" : "^0.2.0",
+        "caf_transport" : "^0.2.0",
         "jsonwebtoken" : "^3.2.2",
-        "caf_cli" : "^0.2.0",
         "srp" : "^0.2.0",
         "async" : ">=0.1.9"
     },
     "devDependencies": {
-        "nodeunit" : ">=0.9",
-        "caf_core" : "^0.2.0",
-        "caf_transport" : "^0.2.0",
         "jwt-decode" : "^1.1.0",
-        "browserify-bignum" : "^1.3.0",
-        "aliasify": "^1.7.2",
-        "varify": "^0.1.1",
-        "browserify": "^9.0.3"
+        "nodeunit" : ">=0.9",
+        "caf_core" : "^0.2.0"
     },
     "main": "index",
     "homepage": "http://www.cafjs.com",
@@ -27,11 +22,7 @@
         "url": "https://github.com/cafjs/caf_security.git"
     },
     "scripts": {
-        "test": "node ./node_modules/.bin/nodeunit",
-       "build-js" : "browserify . -d  -g varify -g aliasify  -o build.js",
-        "build-min-js" : "export NODE_ENV=production; browserify . -g varify -g aliasify  | uglifyjs > build.min.js",
-        "build": "npm run build-js && npm run build-min-js"
-
+        "test": "node ./node_modules/.bin/nodeunit"
     },
     "browser": {
         "./lib/main.js": "./lib/main-shim.js",
