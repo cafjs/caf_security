@@ -8,8 +8,6 @@ var path = require('path');
 var caf_security = require('../index.js');
 var tokens = caf_security.tokens;
 var rules = caf_security.rules;
-var srp = caf_security.srp;
-
 var cli = require('caf_cli');
 
 
@@ -620,59 +618,5 @@ module.exports = {
                 test.ifError(err);
                 test.done();
             });
-    },
-    srp: function(test) {
-        var self = this;
-        test.expect(7);
-        var p1 = tokens.newPayload(APP_PUBLISHER_PUB_1,
-                                   APP_PUBLISHER_PUB_NAME_1,
-                                   CA_OWNER_1, CA_LOCAL_NAME_1, 100000);
-        var p2 = tokens.newPayload(null, null, CA_OWNER_1, null, 100000);
-
-        var p1Bad = tokens.newPayload(APP_PUBLISHER_PUB_1,
-                                      APP_PUBLISHER_PUB_NAME_1,
-                                      CA_OWNER_2, CA_LOCAL_NAME_1, 100000);
-        var transmit = function(x) {
-            return JSON.parse(JSON.stringify(x));
-        };
-
-        // create account
-        var client = srp.clientInstance(CA_OWNER_1, PASSWD1);
-        var accounts = {};
-        var server = srp.serverInstance(accounts, privKey1, pubKey1);
-        var newAcc = client.newAccount();
-        server.newAccount(transmit(newAcc));
-        test.ok(accounts[CA_OWNER_1]);
-        // duplicate
-        test.throws(function() {  server.newAccount(transmit(newAcc));});
-
-        // get token
-        var user = client.hello();
-        var helloReply = transmit(server.hello(transmit(user)));
-        var loginReply = transmit(client.login(helloReply));
-        var tokenReply = transmit(server.newToken(loginReply, p1));
-        test.throws(function() {server.newToken(loginReply, p1Bad);});
-
-        var tokenStr = client.newToken(tokenReply, p1);
-        console.log(tokenStr);
-        var tok = tokens.validate(tokenStr, pubKey1);
-        test.ok(tokens.similar(tok, p1, true));
-        test.throws(function() {client.newToken(tokenReply, p2);});
-
-        // bad password
-        client = srp.clientInstance(CA_OWNER_1, PASSWD2);
-        user = client.hello();
-        helloReply = server.hello(user);
-        loginReply = client.login(helloReply);
-        test.throws(function() { server.newToken(loginReply, p1); });
-
-        // bad username
-        client = srp.clientInstance(CA_OWNER_2, PASSWD1);
-        user = client.hello();
-        test.throws(function() { server.hello(user);});
-
-        test.done();
-
-
     }
 };
