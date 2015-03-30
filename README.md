@@ -24,7 +24,7 @@ This repository contains a CAF lib to add security checks.
         {
             "module": "caf_security/plug",
             "name": "security",
-            "description": "Authenticates requests\n Properties: <keysDir> Directory with key material, defaults to colocated with ca_methods.js (i.e., <app_root>/lib).\n <trustedPubKeyFile> Trusted public key to verify signed tokens. \n <privateKeyFile> Optional private key to sign tokens. \n <pubKeyFile> Optional public key for signing key. \n <appPublisher> Name of the app publisher.\n <appLocalName> Local name app given by the app publisher.\n <allowNobodyUser> Enable the user 'nobody' to bypass authentication",
+            "description": "Authenticates requests\n Properties: <keysDir> Directory with key material, defaults to colocated with ca_methods.js (i.e., <app_root>/lib).\n <trustedPubKeyFile> Trusted public key to verify signed tokens. \n <privateKeyFile> Optional private key to sign tokens. \n <pubKeyFile> Optional public key for signing key. \n <appPublisher> Name of the app publisher.\n <appLocalName> Local name app given by the app publisher.\n <allowNobodyUser> Enable the user 'nobody' to bypass authentication\n <accountsURL> Optional URL of an external service for user authentication.",
             "env": {
                         "keysDir": null,
                         "trustedPubKeyFile" : "trusted_pub.pem",
@@ -32,7 +32,8 @@ This repository contains a CAF lib to add security checks.
                         "publicKeyFile" : null,
                         "appPublisher" : "d41d8cd98a00b204e9700988ecf8427e",
                         "appLocalName" : "myApp",
-                        "allowNobodyUser" : false
+                        "allowNobodyUser" : false,
+                        "accountsURL" : "https://root-accounts.vcap.me:3001"
                         
                     }
                 }
