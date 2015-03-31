@@ -87,9 +87,9 @@ module.exports = {
 
         // signs ok
         var p1 = tokens.newPayload(APP_PUBLISHER_1, APP_LOCAL_NAME_1,
-                                   CA_OWNER_1, CA_LOCAL_NAME_1, 10000);
+                                   CA_OWNER_1, CA_LOCAL_NAME_1, 10);
         var p2 = tokens.newPayload(APP_PUBLISHER_2, APP_LOCAL_NAME_2,
-                                   CA_OWNER_2, CA_LOCAL_NAME_2, 10000);
+                                   CA_OWNER_2, CA_LOCAL_NAME_2, 10);
         var p1Signed = tokens.sign(p1, privKey1);
         var p2Signed = tokens.sign(p2, privKey2);
 
@@ -134,12 +134,12 @@ module.exports = {
         // bad character in identifier
         test.throws(function() {
                         tokens.newPayload(BAD_APP_PUBLISHER, APP_LOCAL_NAME_2,
-                                          CA_OWNER_2, CA_LOCAL_NAME_2, 10000);
+                                          CA_OWNER_2, CA_LOCAL_NAME_2, 10);
                     });
 
         // expired token
         var pExpires = tokens.newPayload(APP_PUBLISHER_2, APP_LOCAL_NAME_2,
-                                         CA_OWNER_2, CA_LOCAL_NAME_2, 1000);
+                                         CA_OWNER_2, CA_LOCAL_NAME_2, 1);
         var p2SignedExpires = tokens.sign(pExpires, privKey2);
         setTimeout(function() {
                        test.throws(function() {
@@ -153,9 +153,9 @@ module.exports = {
         var self = this;
         test.expect(24);
         var p1 = tokens.newPayload(APP_PUBLISHER_1, APP_LOCAL_NAME_1,
-                                   CA_OWNER_1, CA_LOCAL_NAME_1, 10000);
+                                   CA_OWNER_1, CA_LOCAL_NAME_1, 10);
         var p2 = tokens.newPayload(null, APP_LOCAL_NAME_1,
-                                   CA_OWNER_1, CA_LOCAL_NAME_1, 10000);
+                                   CA_OWNER_1, CA_LOCAL_NAME_1, 10);
         var acl1 = tokens.newPayload(APP_PUBLISHER_1,null, CA_OWNER_1);
         test.ok(tokens.satisfyACL(acl1, p1));
         test.ok(tokens.satisfyACL(acl1, p2));
@@ -184,9 +184,9 @@ module.exports = {
 
         // reflexive, commutative, associative
         var p3 = tokens.newPayload(null, APP_LOCAL_NAME_1,
-                                   CA_OWNER_1, null, 10000);
+                                   CA_OWNER_1, null, 10);
         var p4 = tokens.newPayload(APP_PUBLISHER_1, APP_LOCAL_NAME_1,
-                                   null, CA_LOCAL_NAME_1, 10000);
+                                   null, CA_LOCAL_NAME_1, 10);
 
         test.ok(tokens.similar(tokens.meet(p1, p1), p1));
         test.ok(tokens.similar(tokens.meet(p2, p2), p2));
@@ -210,20 +210,20 @@ module.exports = {
         test.expect(12);
         var p1 = tokens.newPayload(APP_PUBLISHER_PUB_1,
                                    APP_PUBLISHER_PUB_NAME_1,
-                                   CA_OWNER_1, CA_LOCAL_NAME_1, 100000);
+                                   CA_OWNER_1, CA_LOCAL_NAME_1, 100);
         var p1Signed = tokens.sign(p1, privKey1);
         tokens.validate(p1Signed, pubKey1);
         var p2 = tokens.newPayload(APP_PUBLISHER_PUB_1,
                                    APP_PUBLISHER_PUB_NAME_1,
-                                   null, CA_LOCAL_NAME_1, 100200);
+                                   null, CA_LOCAL_NAME_1, 101);
         var p2Signed = tokens.sign(p2, privKey1);
 
-        var p3 = tokens.newPayload(null, null, CA_OWNER_1, null, 100300);
+        var p3 = tokens.newPayload(null, null, CA_OWNER_1, null, 102);
         var p3Signed = tokens.sign(p3, privKey1);
 
         var p1Bad = tokens.newPayload(APP_PUBLISHER_PUB_1,
                                       APP_PUBLISHER_PUB_NAME_1,
-                                      CA_OWNER_1, CA_LOCAL_NAME_2, 5000);
+                                      CA_OWNER_1, CA_LOCAL_NAME_2, 5);
         var p1BadSigned = tokens.sign(p1Bad, privKey1);
 
 
@@ -294,7 +294,7 @@ module.exports = {
                         cb(err, data);
                     };
                     var p1Constraint = myUtils.clone(p1);
-                    p1Constraint.durationInMsec = 1000;
+                    p1Constraint.durationInSec = 1;
                     self.$._.$.security
                         .__ca_attenuateToken__(p3Signed, p1Constraint, cb1);
                 },
@@ -310,7 +310,7 @@ module.exports = {
                         cb(null);
                     };
                     var p1Constraint = myUtils.clone(p1);
-                    p1Constraint.durationInMsec = 10000000000000;
+                    p1Constraint.durationInSec = 10000000000;
                     self.$._.$.security
                         .__ca_attenuateToken__(p3Signed, p1Constraint, cb1);
                 },
@@ -334,7 +334,7 @@ module.exports = {
                         cb(null);
                     };
                     var p2Constraint = myUtils.clone(p2);
-                    p2Constraint.durationInMsec = 1000;
+                    p2Constraint.durationInSec = 1;
                     self.$._.$.security
                         .__ca_attenuateToken__(p3Signed, p2Constraint, cb1);
                 },
@@ -510,13 +510,13 @@ module.exports = {
         var s2;
         var token1 = tokens.newPayload(APP_PUBLISHER_PUB_1,
                                        APP_PUBLISHER_PUB_NAME_1,
-                                       CA_OWNER_1, CA_LOCAL_NAME_1, 10000);
+                                       CA_OWNER_1, CA_LOCAL_NAME_1, 10);
         var tk1 =  tokens.sign(token1, privKey1);
         var from1 = CA_OWNER_1 + '-' + CA_LOCAL_NAME_1;
 
         var token2 = tokens.newPayload(APP_PUBLISHER_PUB_1,
                                        APP_PUBLISHER_PUB_NAME_1,
-                                       CA_OWNER_2, CA_LOCAL_NAME_2, 10000);
+                                       CA_OWNER_2, CA_LOCAL_NAME_2, 10);
         var tk2 =  tokens.sign(token2, privKey1);
         var from2 = CA_OWNER_2 + '-' + CA_LOCAL_NAME_2;
         var ruleId;
@@ -589,7 +589,7 @@ module.exports = {
                                             appLocalName : null,
                                             caOwner: null,
                                             caLocalName: null,
-                                            durationInMsec: 1000 // shorter
+                                            durationInSec: 1 // shorter
                                           },
                                       cb);
                 },
