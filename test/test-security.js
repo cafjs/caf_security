@@ -9,7 +9,7 @@ var path = require('path');
 var caf_security = require('../index.js');
 var tokens = caf_security.tokens;
 var rules = caf_security.rules;
-
+var aggregates = caf_security.aggregates;
 
 
 var hello = require('./hello/main.js');
@@ -80,7 +80,6 @@ module.exports = {
             this.$.top.__ca_graceful_shutdown__(null, cb);
         }
     },
-
     helloworld: function (test) {
         var self = this;
         test.expect(13);
@@ -503,6 +502,70 @@ module.exports = {
                      });
         test.done();
     },
+    aggregates: function(test) {
+        var map = {};
+        var t1 = {};
+        var t2 = {};
+        var fakeAggregate = function(agg) {
+            return {
+                getAll: function(key) {
+                    var res = agg[key];
+                    return (res ? [res] : []);
+                }
+            };
+        };
+        map.friends = fakeAggregate(t1);
+        map.work = fakeAggregate(t2);
+        var fakeCA = { $ : {sharing : { $ : map}}};
+        test.expect(16);
+
+        // work colleagues can do 'foo', 'bar' and 'foobar'
+        var r1 = aggregates.newAggregateRule('foo', 'work');
+        var r2 = aggregates.newAggregateRule(['bar', 'foobar'], 'work');
+        test.equals( typeof  aggregates.computeRuleId(r1), 'string');
+        test.ok(aggregates.computeRuleId(r1) !== aggregates.computeRuleId(r2));
+        test.ok(aggregates.computeRuleId(r1) === aggregates.computeRuleId(r1));
+
+        // friends can do anything
+        var r3 = aggregates.newAggregateRule(null, 'friends');
+
+        var rE = aggregates.newRuleEngine(fakeCA, [r1,r2,r3]);
+
+        // John and Susan are friends, only one of Susan's CA enabled.
+        t1['john'] = true;
+        t1['susan-caX'] = true;
+
+        // Mike and Helen are co-workers, only two Helen's CAs are enabled
+        t2['mike'] = true;
+        t2['helen-ca1'] = true;
+        t2['helen-ca2'] = true;
+
+        test.ok(aggregates.isAuthorized('john', 'caYY', 'm1', rE));
+        test.ok(!aggregates.isAuthorized('susan', 'caNope', 'mXX', rE));
+
+        test.ok(aggregates.isAuthorized('mike', 'caXX', 'foo', rE));
+        test.ok(aggregates.isAuthorized('mike', 'caX', 'foobar', rE));
+        test.ok(!aggregates.isAuthorized('mike', 'caXX', 'fooNever', rE));
+
+        test.ok(aggregates.isAuthorized('helen', 'ca1', 'foo', rE));
+        test.ok(aggregates.isAuthorized('helen', 'ca2', 'foobar', rE));
+        test.ok(!aggregates.isAuthorized('helen', 'caXX', 'foo', rE));
+        test.ok(!aggregates.isAuthorized('helen', 'ca1', 'fooNever', rE));
+        test.ok(!aggregates.isAuthorized('helen', 'caXXX', 'fooNever', rE));
+
+        // change aggregates
+        delete t2['helen-ca1'];
+        test.ok(!aggregates.isAuthorized('helen', 'ca1', 'foo', rE));
+        t2['helen-ca1'] = true;
+        test.ok(aggregates.isAuthorized('helen', 'ca1', 'foo', rE));
+
+        // change rules
+        rE = aggregates.newRuleEngine(fakeCA, [r2,r3]);
+        test.ok(!aggregates.isAuthorized('helen', 'ca1', 'foo', rE));
+
+        test.done();
+
+    },
     caAuthorization:  function (test) {
         var self = this;
         test.expect(13);
@@ -620,4 +683,5 @@ module.exports = {
                 test.done();
             });
     }
+
 };
