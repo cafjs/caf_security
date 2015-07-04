@@ -14,18 +14,22 @@ var aggregates = caf_security.aggregates;
 
 var hello = require('./hello/main.js');
 var app = hello;
+var aggApp =  require('./aggregate/main.js');
+
+//app = aggApp;
+
 
 var HOST='localhost';
 var PORT=3000;
- privKey1 = fs.readFileSync(path.resolve(__dirname,
-                                            'hello/dummy1PrivKey.key'));
+var  privKey1 = fs.readFileSync(path.resolve(__dirname,
+                                             'hello/dummy1PrivKey.key'));
 var privKey2 = fs.readFileSync(path.resolve(__dirname,
                                             'hello/dummy2PrivKey.key'));
 
 var pubKey1 = fs.readFileSync(path.resolve(__dirname,
-                                            'hello/dummy1PubKey.pem'));
+                                           'hello/dummy1PubKey.pem'));
 var pubKey2 = fs.readFileSync(path.resolve(__dirname,
-                                            'hello/dummy2SelfSigned.pem'));
+                                           'hello/dummy2SelfSigned.pem'));
 
 
 var APP_PUBLISHER_1='someone1';
@@ -40,36 +44,41 @@ var CA_OWNER_2='other2';
 var CA_LOCAL_NAME_2='bar2';
 var FROM_2 =  CA_OWNER_2 + '-' + CA_LOCAL_NAME_2;
 
+
+var CA_LOCAL_NAME_3='bar3';
+var FROM_3 =  CA_OWNER_1 + '-' + CA_LOCAL_NAME_3;
+
+
 var BAD_APP_PUBLISHER = 'some$one';
 
-var APP_PUBLISHER_PUB_1 = "F1CD0B760DCEE7DE770249F4512A9D0A";
-var APP_PUBLISHER_PUB_NAME_1 = "myApp";
+var APP_PUBLISHER_PUB_1 = "someone1";
+var APP_PUBLISHER_PUB_NAME_1 = "fooApp1";
 
 var PASSWD1 = 'foo';
 var PASSWD2 = 'bar';
 
 process.on('uncaughtException', function (err) {
-               console.log("Uncaught Exception: " + err);
-               console.log(myUtils.errToPrettyStr(err));
-               process.exit(1);
+    console.log("Uncaught Exception: " + err);
+    console.log(myUtils.errToPrettyStr(err));
+    process.exit(1);
 
 });
 
 module.exports = {
     setUp: function (cb) {
-       var self = this;
+        var self = this;
         app.init( {name: 'top'}, 'framework.json', null,
-                      function(err, $) {
-                          if (err) {
-                              console.log('setUP Error' + err);
-                              console.log('setUP Error $' + $);
-                              // ignore errors here, check in method
-                              cb(null);
-                          } else {
-                              self.$ = $;
-                              cb(err, $);
-                          }
-                      });
+                  function(err, $) {
+                      if (err) {
+                          console.log('setUP Error' + err);
+                          console.log('setUP Error $' + $);
+                          // ignore errors here, check in method
+                          cb(null);
+                      } else {
+                          self.$ = $;
+                          cb(err, $);
+                      }
+                  });
     },
 
     tearDown: function (cb) {
@@ -132,21 +141,21 @@ module.exports = {
 
         // bad character in identifier
         test.throws(function() {
-                        tokens.newPayload(BAD_APP_PUBLISHER, APP_LOCAL_NAME_2,
-                                          CA_OWNER_2, CA_LOCAL_NAME_2, 10);
-                    });
+            tokens.newPayload(BAD_APP_PUBLISHER, APP_LOCAL_NAME_2,
+                              CA_OWNER_2, CA_LOCAL_NAME_2, 10);
+        });
 
         // expired token
         var pExpires = tokens.newPayload(APP_PUBLISHER_2, APP_LOCAL_NAME_2,
                                          CA_OWNER_2, CA_LOCAL_NAME_2, 1);
         var p2SignedExpires = tokens.sign(pExpires, privKey2);
         setTimeout(function() {
-                       test.throws(function() {
-                                       tokens.validate(p2SignedExpires,
-                                                       pubKey2);
-                                   });
-                       test.done();
-                   }, 1500);
+            test.throws(function() {
+                tokens.validate(p2SignedExpires,
+                                pubKey2);
+            });
+            test.done();
+        }, 1500);
     },
     meet: function (test) {
         var self = this;
@@ -265,11 +274,11 @@ module.exports = {
                                     'Token does not respect constraints');
                         console.log(err);
                         setTimeout(function() {
-                                       cb(null);
-                                   }, 6000); // Enough for cron to clean cache
+                            cb(null);
+                        }, 6000); // Enough for cron to clean cache
                     };
                     self.$._.$.security.__ca_authenticate__(FROM_1, p1BadSigned,
-                                                          cb1);
+                                                            cb1);
                 },
                 function(cb) {
                     // should not be cached, and expire error instead
@@ -281,7 +290,7 @@ module.exports = {
                         cb(null);
                     };
                     self.$._.$.security.__ca_authenticate__(FROM_1, p1BadSigned,
-                                                          cb1);
+                                                            cb1);
                 },
 
 
@@ -299,7 +308,7 @@ module.exports = {
                 },
                 function(cb) {
                     self.$._.$.security.__ca_authenticate__(FROM_1, weakerToken,
-                                                          cb);
+                                                            cb);
                 },
 
                 // not a weaker token due to expire date
@@ -340,7 +349,7 @@ module.exports = {
 
                 // 'nobody' account
                 function(cb) {
-                     self.$._.$.security
+                    self.$._.$.security
                         .__ca_authenticate__(json_rpc.DEFAULT_FROM, null, cb);
                 },
                 function(cb) {
@@ -348,7 +357,7 @@ module.exports = {
                         test.ok(err);
                         cb(null);
                     };
-                     self.$._.$.security
+                    self.$._.$.security
                         .__ca_authenticate__(FROM_1, null, cb1);
                 },
                 function(cb) {
@@ -356,13 +365,13 @@ module.exports = {
                         test.ok(err);
                         cb(null);
                     };
-                     self.$._.$.security
+                    self.$._.$.security
                         .__ca_authenticate__('donotwork', null, cb1);
                 }
-           ], function(err, data) {
-               test.ifError(err);
-               test.done();
-           });
+            ], function(err, data) {
+                test.ifError(err);
+                test.done();
+            });
     },
     rules: function (test) {
         var self = this;
@@ -465,10 +474,10 @@ module.exports = {
 
         var doOne = function() {
             testSet.forEach(function(x) {
-                                rE = rules.newRuleEngine(x[0], x[1], [x[2]]);
-                                console.log(rE);
-                                basicTest.apply(this, x[3]);
-                            });
+                rE = rules.newRuleEngine(x[0], x[1], [x[2]]);
+                console.log(rE);
+                basicTest.apply(this, x[3]);
+            });
         };
 
         doOne();
@@ -485,21 +494,21 @@ module.exports = {
 
         testSet
             .forEach(function(x) {
-                         testSet
-                             .forEach(function(y) {
-                                          if ((x[0] === y[0]) &&
-                                              (x[1] === y[1])) {
-                                              rE = rules
-                                                  .newRuleEngine(x[0], x[1],
-                                                                 [x[2], y[2]]);
+                testSet
+                    .forEach(function(y) {
+                        if ((x[0] === y[0]) &&
+                            (x[1] === y[1])) {
+                            rE = rules
+                                .newRuleEngine(x[0], x[1],
+                                               [x[2], y[2]]);
 
-                                              console.log(rE);
-                                              basicTest.apply(this,
-                                                              combine(x[3],
-                                                                      y[3]));
-                                          }
-                                      });
-                     });
+                            console.log(rE);
+                            basicTest.apply(this,
+                                            combine(x[3],
+                                                    y[3]));
+                        }
+                    });
+            });
         test.done();
     },
     aggregates: function(test) {
@@ -516,7 +525,7 @@ module.exports = {
         };
         map.friends = fakeAggregate(t1);
         map.work = fakeAggregate(t2);
-        var fakeCA = { $ : {sharing : { $ : map}}};
+        var fakeCA = { $ : {sharing : { $ : {proxy: { $ :map}}}}};
         test.expect(16);
 
         // work colleagues can do 'foo', 'bar' and 'foobar'
@@ -571,14 +580,14 @@ module.exports = {
         test.expect(13);
         var s1;
         var s2;
-        var token1 = tokens.newPayload(APP_PUBLISHER_PUB_1,
-                                       APP_PUBLISHER_PUB_NAME_1,
+        var token1 = tokens.newPayload(APP_PUBLISHER_1,
+                                       APP_LOCAL_NAME_1,
                                        CA_OWNER_1, CA_LOCAL_NAME_1, 10);
         var tk1 =  tokens.sign(token1, privKey1);
         var from1 = CA_OWNER_1 + '-' + CA_LOCAL_NAME_1;
 
-        var token2 = tokens.newPayload(APP_PUBLISHER_PUB_1,
-                                       APP_PUBLISHER_PUB_NAME_1,
+        var token2 = tokens.newPayload(APP_PUBLISHER_1,
+                                       APP_LOCAL_NAME_1,
                                        CA_OWNER_2, CA_LOCAL_NAME_2, 10);
         var tk2 =  tokens.sign(token2, privKey1);
         var from2 = CA_OWNER_2 + '-' + CA_LOCAL_NAME_2;
@@ -587,20 +596,20 @@ module.exports = {
         async.waterfall(
             [
                 function(cb) {
-                    s1 = new cli.Session('ws://foo.vcap.me:3000', from1, {
-                                            token : tk1,
-                                            from : from1
-                                        });
+                    s1 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000', from1, {
+                        token : tk1,
+                        from : from1
+                    });
                     s1.onopen = function() {
                         s1.hello('foo', cb);
                     };
                 },
                 function(res, cb) {
                     test.equals(res, 'Bye:foo:' + from1);
-                    s2 = new cli.Session('ws://foo.vcap.me:3000', from1, {
-                                             token : tk2,
-                                             from : from2
-                                         });
+                    s2 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000', from1, {
+                        token : tk2,
+                        from : from2
+                    });
                     s2.onclose = function(err) {
                         console.log(err);
                         test.ok(json_rpc.isSystemError(err));
@@ -611,10 +620,10 @@ module.exports = {
                 },
                 // check only owners can create CAs
                 function(res, cb) {
-                    s2 = new cli.Session('ws://foo.vcap.me:3000', from2, {
-                                             token : tk1,
-                                             from : from1
-                                         });
+                    s2 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000', from2, {
+                        token : tk1,
+                        from : from1
+                    });
                     s2.onclose = function(err) {
                         console.log(err);
                         test.ok(json_rpc.isSystemError(err));
@@ -630,11 +639,11 @@ module.exports = {
                 function(id, cb) {
                     test.equals(typeof id, 'string');
                     ruleId = id;
-                    s2 = new cli.Session('ws://foo.vcap.me:3000', from1, {
-                                             token : tk2,
-                                             from : from2
-                                         });
-                     s2.onopen = function() {
+                    s2 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000', from1, {
+                        token : tk2,
+                        from : from2
+                    });
+                    s2.onopen = function() {
                         s2.hello('foo', cb);
                     };
                 },
@@ -663,13 +672,156 @@ module.exports = {
                     s2.onclose = function(err) {
                         test.ok(json_rpc.isSystemError(err));
                         test.equal(json_rpc.getSystemErrorCode(err),
-                               json_rpc.ERROR_CODES.notAuthorized);
+                                   json_rpc.ERROR_CODES.notAuthorized);
                         cb(null, null);
                     };
                     var neverCalled = function() {
                         test.ok(false, 'should close session after auth error');
                     };
                     s2.hello('foo', neverCalled);
+                },
+                function(res, cb) {
+                    s1.onclose = function(err) {
+                        test.ifError(err);
+                        cb(null, null);
+                    };
+                    s1.close();
+                }
+            ], function(err, res) {
+                test.ifError(err);
+                app = aggApp;
+                test.done();
+            });
+    },
+    aggAuthorization:  function (test) {
+        var self = this;
+        test.expect(13);
+        var s1;
+        var s2;
+        var token1 = tokens.newPayload(APP_PUBLISHER_1,
+                                       APP_LOCAL_NAME_1,
+                                       CA_OWNER_1, CA_LOCAL_NAME_3, 1000);
+        var tk1 =  tokens.sign(token1, privKey1);
+        var from3 = CA_OWNER_1 + '-' + CA_LOCAL_NAME_3;
+
+        var token2 = tokens.newPayload(APP_PUBLISHER_1,
+                                       APP_LOCAL_NAME_1,
+                                       CA_OWNER_2, CA_LOCAL_NAME_2, 1000);
+        var tk2 =  tokens.sign(token2, privKey1);
+        var from2 = CA_OWNER_2 + '-' + CA_LOCAL_NAME_2;
+        var ruleId;
+
+        async.waterfall(
+            [
+                function(cb) {
+                    s1 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000',
+                                         from3, {
+                        token : tk1,
+                        from : from3
+                    });
+                    s1.onopen = function() {
+                        s1.allowWithAggregate(['__external_ca_touch__',
+                                               'hello'], from2, cb);
+                    };
+                },
+                function(res, cb) {
+                    test.equals(typeof res, 'string');
+                    setTimeout(function() {
+                        s1.query(from2, function(err, data) {
+                            test.ifError(err);
+                            test.equals(data.length, 1);
+                            console.log('<<<>><><>>' + data);
+                            cb(null, data);
+                        });
+                    }, 2000);
+                },
+                function(res, cb) {
+                    s2 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000',
+                                         from3, {
+                                             token : tk2,
+                                             from : from2
+                                         });
+                    s2.onopen = function() {
+                        s2.hello('foo', cb);
+                    };
+                },
+                function(res, cb) {
+                    test.equals(res, 'Bye:foo:' + from2);
+                    cb(null, null);
+                },
+                function(res, cb) {
+                    s1.denyWithAggregate(from2, cb);
+                },
+                function(res, cb) {
+                    setTimeout(function() {
+                        s1.query(from2, function(err, data) {
+                            test.ifError(err);
+                            test.equals(data.length, 0);
+                            console.log('<<<>><><>>' + data);
+                            cb(null, data);
+                        });
+                    }, 2000);
+                },
+
+                function(res, cb) {
+                    var cb1 = function(err, data) {
+                        // never reached
+                        test.ok(false);
+                        cb(null, null);
+                    };
+                    s2.onclose = function(err) {
+                        test.ok(err);
+                        cb(null, null);
+                    };
+                    s2.hello('foo', cb1);
+                },
+                function(res, cb) {
+                    s1.allowWithAggregate(['__external_ca_touch__',
+                                           'hello'], from2, cb);
+                },
+                function(res, cb) {
+                    setTimeout(function() {
+                        s2 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000',
+                                             from3, {
+                                                 token : tk2,
+                                                 from : from2
+                                             });
+                        s2.onopen = function() {
+                            s2.hello('foo', cb);
+                        };
+                    }, 1000);
+                },
+                function(res, cb) {
+                    test.equals(res, 'Bye:foo:' + from2);
+                    cb(null, null);
+                },
+                function(res, cb) {
+                    console.log('======');
+                    s1.denyWithAggregateV2(from2, cb);
+                },
+                function(res, cb) {
+                    setTimeout(function() {
+                        s1.query(from2, function(err, data) {
+                            test.ifError(err);
+                            test.equals(data.length, 0);
+                            console.log('<<<>><><>>' + data);
+                            cb(null, data);
+                        });
+                    }, 2000);
+                },
+                function(res, cb) {
+                    var cb1 = function(err, data) {
+                        // never reached
+                        console.log('7error:' + err);
+                        console.log('7data:' + data);
+                        test.ok(false);
+                        cb(null, null);
+                    };
+                    s2.onclose = function(err) {
+                        test.ok(err);
+                        cb(null, null);
+                    };
+                    s2.hello('foo', cb1);
                 },
                 function(res, cb) {
                     s1.onclose = function(err) {

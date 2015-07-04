@@ -25,6 +25,36 @@
             "env" : {
                 "interval": 5000
             }
+        },
+        {
+            "name": "cp"
+        },
+        {
+            "name": "cp2",
+            "module" : "caf_redis#plug",
+            "description" : "Checkpointing service",
+            "env" : {
+               "nodeId": "default",
+               "paas" : "redis",
+               "redis" : {
+                   "password" : null,
+                   "hostname" : "localhost",
+                   "port" : 6379
+                },
+                "coalescing" : {
+                    "interval" : 10,
+                    "maxPendingUpdates" : 20
+                }
+            }
+        },
+        {
+            "name": "sharing",
+            "module": "caf_sharing#plug",
+            "description": "Sharing service",
+            "env" : {
+                "persistService" : "cp",
+                "routeService" : "cp2"
+            }
         }
     ]
 }
