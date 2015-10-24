@@ -1,7 +1,7 @@
 {
     "name": "caf_security",
     "description": "Cloud Assistants security lib",
-    "version": "0.2.19",
+    "version": "0.2.20",
     "author": "Antonio Lain <antlai@cafjs.com>",
     "dependencies": {
         "caf_components" : "^0.2.0",

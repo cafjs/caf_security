@@ -20,33 +20,27 @@ This repository contains a CAF lib to add security checks.
 
 ### framework.json
 
-       "plugs": [
         {
-            "module": "caf_security/plug",
+            "module": "caf_security#plug",
             "name": "security",
-            "description": "Authenticates requests\n Properties: <keysDir> Directory with key material, defaults to colocated with ca_methods.js (i.e., <app_root>/lib).\n <trustedPubKeyFile> Trusted public key to verify signed tokens. \n <privateKeyFile> Optional private key to sign tokens. \n <pubKeyFile> Optional public key for signing key. \n <appPublisher> Name of the app publisher.\n <appLocalName> Local name app given by the app publisher.\n <allowNobodyUser> Enable the user 'nobody' to bypass authentication\n <accountsURL> Optional URL of an external service for user authentication.",
+            "description": "Authenticates requests\n Properties: <keysDir> Directory with key material, defaults to colocated with ca_methods.js (i.e., <app_root>/lib).\n <trustedPubKeyFile> Trusted public key to verify signed tokens. \n <privateKeyFile> Optional private key to sign tokens. \n <pubKeyFile> Optional public key for signing key. \n <allowNobodyUser> Enable the user 'nobody' to bypass authentication\n <accountsURL> Optional URL of an external service for user authentication.",
             "env": {
                         "keysDir": null,
                         "trustedPubKeyFile" : "trusted_pub.pem",
                         "privateKeyFile": null,
                         "publicKeyFile" : null,
-                        "appPublisher" : "d41d8cd98a00b204e9700988ecf8427e",
-                        "appLocalName" : "myApp",
                         "allowNobodyUser" : false,
                         "accountsURL" : "https://root-accounts.vcap.me:3001"
-                        
                     }
                 }
             }
         }
         
         
-The above example uses an external authentication service that signs tokens with an asymmetric key (RSA). The file `trustedPubKeyFile` (in the same directory as `ca_methods.js` or absolute path) contains the service public key (self-signed certificate in PEM format, see `openssl`).
+The above example uses an external authentication service that signs tokens with an asymmetric key (RSA). The file `trustedPubKeyFile` (in the same directory as `ca_methods.js` or in `keysDir` path) contains the `accounts` service public key (self-signed certificate in PEM format, see `openssl`).
 
-Instead, if this plug can sign tokens on its own, the `serviceURL` is `null` and the files `privateKeyFile` and `pubKeyFile` provide the asymmetric key.
+If instead this plug can sign tokens on its own, e.g., it is implementing the `accounts` service itself, the `accountsURL` is `null` and the files `privateKeyFile` and `pubKeyFile` provide the asymmetric key.
 
-The property `unrestricted` is a suggestion that this app needs a token that can be used to authenticate to any application; the end user is prompted to confirm  this request, and should only grant it for trusted apps.
-    
 
 ### ca.json
 
