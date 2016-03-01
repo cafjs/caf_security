@@ -714,6 +714,7 @@ module.exports = {
         async.waterfall(
             [
                 function(cb) {
+                    console.log('<1');
                     s1 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000',
                                          from3, {
                         token : tk1,
@@ -725,6 +726,7 @@ module.exports = {
                     };
                 },
                 function(res, cb) {
+                    console.log('<2');
                     test.equals(typeof res, 'string');
                     setTimeout(function() {
                         s1.query(from2, function(err, data) {
@@ -736,6 +738,7 @@ module.exports = {
                     }, 2000);
                 },
                 function(res, cb) {
+                    console.log('<3');
                     s2 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000',
                                          from3, {
                                              token : tk2,
@@ -746,13 +749,16 @@ module.exports = {
                     };
                 },
                 function(res, cb) {
+                    console.log('<4');
                     test.equals(res, 'Bye:foo:' + from2);
                     cb(null, null);
                 },
                 function(res, cb) {
+                    console.log('<5');
                     s1.denyWithAggregate(from2, cb);
                 },
                 function(res, cb) {
+                    console.log('<6');
                     setTimeout(function() {
                         s1.query(from2, function(err, data) {
                             test.ifError(err);
@@ -764,6 +770,7 @@ module.exports = {
                 },
 
                 function(res, cb) {
+                    console.log('<7');
                     var cb1 = function(err, data) {
                         // never reached
                         test.ok(false);
@@ -776,30 +783,42 @@ module.exports = {
                     s2.hello('foo', cb1);
                 },
                 function(res, cb) {
+                    console.log('<8');
                     s1.allowWithAggregate(['__external_ca_touch__',
                                            'hello'], from2, cb);
                 },
                 function(res, cb) {
+                    console.log('<9');
                     setTimeout(function() {
                         s2 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000',
                                              from3, {
                                                  token : tk2,
                                                  from : from2
                                              });
+                        s2.onclose = function(err) {
+                            // never reached
+                            test.ok(false);
+                            // cleanup
+                            s1.onclose = function() {};
+                            s1.close();
+                            cb(err);
+                        };
                         s2.onopen = function() {
                             s2.hello('foo', cb);
                         };
-                    }, 1000);
+                    }, 2000); // leave enough time to propagate aggregate
                 },
                 function(res, cb) {
+                    console.log('<10');
                     test.equals(res, 'Bye:foo:' + from2);
                     cb(null, null);
                 },
                 function(res, cb) {
-                    console.log('======');
+                    console.log('<11');
                     s1.denyWithAggregateV2(from2, cb);
                 },
                 function(res, cb) {
+                    console.log('<12');
                     setTimeout(function() {
                         s1.query(from2, function(err, data) {
                             test.ifError(err);
@@ -810,11 +829,14 @@ module.exports = {
                     }, 2000);
                 },
                 function(res, cb) {
+                    console.log('<13');
                     var cb1 = function(err, data) {
                         // never reached
                         console.log('7error:' + err);
                         console.log('7data:' + data);
                         test.ok(false);
+                        s2.onclose = function() {};
+                        s2.close();
                         cb(null, null);
                     };
                     s2.onclose = function(err) {
@@ -824,6 +846,7 @@ module.exports = {
                     s2.hello('foo', cb1);
                 },
                 function(res, cb) {
+                    console.log('<14');
                     s1.onclose = function(err) {
                         test.ifError(err);
                         cb(null, null);
