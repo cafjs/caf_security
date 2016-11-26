@@ -1,8 +1,9 @@
-var caf_comp = require('caf_components');
-var json_rpc = require('caf_transport').json_rpc;
+var caf = require('caf_core');
+var caf_comp = caf.caf_components;
+var json_rpc = caf.caf_transport.json_rpc;
 var myUtils = caf_comp.myUtils;
 var async = caf_comp.async;
-var cli =  require('caf_cli');
+var cli =  caf.caf_cli;
 
 var fs = require('fs');
 var path = require('path');

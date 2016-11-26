@@ -1,6 +1,7 @@
-var caf_comp = require('caf_components');
-var caf_platform = require('caf_platform');
-var caf_ca = require('caf_ca');
+var caf = require('caf_core');
+var caf_comp = caf.caf_components;
+var caf_platform = caf.caf_platform;
+var caf_ca = caf.caf_ca;
 
 exports.init = function(spec, frameworkDesc, modules, cb) {
     var cb0 = function(err, $) {
@@ -15,7 +16,7 @@ exports.init = function(spec, frameworkDesc, modules, cb) {
             }
         }
     };
-    
+
     modules = modules || [];
     if (modules && !Array.isArray(modules)) {
         modules = [modules];

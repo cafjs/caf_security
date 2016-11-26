@@ -14,7 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 "use strict";
-var json_rpc = require('caf_transport').json_rpc;
+var caf = require('caf_core');
+var json_rpc = caf.caf_transport.json_rpc;
 
 var ADMIN_MAP = 'master';
 
@@ -82,4 +83,3 @@ exports.methods = {
         cb(null, $$.slave.getAll(name));
     }
 };
-
