@@ -5,7 +5,7 @@ Co-design permanent, active, stateful, reliable cloud proxies with your web app 
 See http://www.cafjs.com
 
 ## CAF Security Library
-[![Build Status](http://ci.cafjs.com/api/badges/cafjs/caf_security/status.svg)](http://ci.cafjs.com/cafjs/caf_security)
+[![Build Status](https://travis-ci.org/cafjs/caf_security.svg?branch=master)](https://travis-ci.org/cafjs/caf_security)
 
 This repository contains a CAF library to add security checks.
 
