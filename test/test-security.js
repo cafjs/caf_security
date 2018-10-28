@@ -612,9 +612,9 @@ module.exports = {
                         from : from2
                     });
                     s2.onclose = function(err) {
-                        console.log(err);
-                        test.ok(json_rpc.isSystemError(err));
-                        test.equal(json_rpc.getSystemErrorCode(err),
+                        console.log(err.msg);
+                        test.ok(json_rpc.isSystemError(err.msg));
+                        test.equal(json_rpc.getSystemErrorCode(err.msg),
                                    json_rpc.ERROR_CODES.notAuthorized);
                         cb(null, null);
                     };
@@ -626,9 +626,9 @@ module.exports = {
                         from : from1
                     });
                     s2.onclose = function(err) {
-                        console.log(err);
-                        test.ok(json_rpc.isSystemError(err));
-                        test.equal(json_rpc.getSystemErrorCode(err),
+                        console.log(err.msg);
+                        test.ok(json_rpc.isSystemError(err.msg));
+                        test.equal(json_rpc.getSystemErrorCode(err.msg),
                                    json_rpc.ERROR_CODES.notAuthorized);
                         cb(null, null);
                     };
@@ -671,8 +671,8 @@ module.exports = {
                     console.log(tk2Shorter);
                     test.ok (tokens.lessOrEqual(tk2Shorter,token2));
                     s2.onclose = function(err) {
-                        test.ok(json_rpc.isSystemError(err));
-                        test.equal(json_rpc.getSystemErrorCode(err),
+                        test.ok(json_rpc.isSystemError(err.msg));
+                        test.equal(json_rpc.getSystemErrorCode(err.msg),
                                    json_rpc.ERROR_CODES.notAuthorized);
                         cb(null, null);
                     };
