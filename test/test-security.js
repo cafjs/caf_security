@@ -34,13 +34,13 @@ var pubKey2 = fs.readFileSync(path.resolve(__dirname,
 
 
 var APP_PUBLISHER_1='someone1';
-var APP_LOCAL_NAME_1='fooApp1';
+var APP_LOCAL_NAME_1='fooapp1';
 var CA_OWNER_1='other1';
 var CA_LOCAL_NAME_1='bar1';
 var FROM_1 =  CA_OWNER_1 + '-' + CA_LOCAL_NAME_1;
 
 var APP_PUBLISHER_2='someone2';
-var APP_LOCAL_NAME_2='fooApp2';
+var APP_LOCAL_NAME_2='fooapp2';
 var CA_OWNER_2='other2';
 var CA_LOCAL_NAME_2='bar2';
 var FROM_2 =  CA_OWNER_2 + '-' + CA_LOCAL_NAME_2;
@@ -53,7 +53,7 @@ var FROM_3 =  CA_OWNER_1 + '-' + CA_LOCAL_NAME_3;
 var BAD_APP_PUBLISHER = 'some$one';
 
 var APP_PUBLISHER_PUB_1 = "someone1";
-var APP_PUBLISHER_PUB_NAME_1 = "fooApp1";
+var APP_PUBLISHER_PUB_NAME_1 = "fooapp1";
 
 var PASSWD1 = 'foo';
 var PASSWD2 = 'bar';
@@ -597,7 +597,7 @@ module.exports = {
         async.waterfall(
             [
                 function(cb) {
-                    s1 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000', from1, {
+                    s1 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000', from1, {
                         token : tk1,
                         from : from1
                     });
@@ -607,7 +607,7 @@ module.exports = {
                 },
                 function(res, cb) {
                     test.equals(res, 'Bye:foo:' + from1);
-                    s2 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000', from1, {
+                    s2 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000', from1, {
                         token : tk2,
                         from : from2
                     });
@@ -621,7 +621,7 @@ module.exports = {
                 },
                 // check only owners can create CAs
                 function(res, cb) {
-                    s2 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000', from2, {
+                    s2 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000', from2, {
                         token : tk1,
                         from : from1
                     });
@@ -640,7 +640,7 @@ module.exports = {
                 function(id, cb) {
                     test.equals(typeof id, 'string');
                     ruleId = id;
-                    s2 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000', from1, {
+                    s2 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000', from1, {
                         token : tk2,
                         from : from2
                     });
@@ -716,7 +716,7 @@ module.exports = {
             [
                 function(cb) {
                     console.log('<1');
-                    s1 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000',
+                    s1 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000',
                                          from3, {
                         token : tk1,
                         from : from3
@@ -740,7 +740,7 @@ module.exports = {
                 },
                 function(res, cb) {
                     console.log('<3');
-                    s2 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000',
+                    s2 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000',
                                          from3, {
                                              token : tk2,
                                              from : from2
@@ -791,7 +791,7 @@ module.exports = {
                 function(res, cb) {
                     console.log('<9');
                     setTimeout(function() {
-                        s2 = new cli.Session('ws://someone1-fooApp1.vcap.me:3000',
+                        s2 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000',
                                              from3, {
                                                  token : tk2,
                                                  from : from2

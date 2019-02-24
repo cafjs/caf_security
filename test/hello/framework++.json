@@ -2,8 +2,9 @@
     "name": "top",
     "env" : {
         "appPublisher" :"someone1",
-        "appLocalName" : "fooApp1",
-        "appSuffix" : "vcap.me"
+        "appLocalName" : "fooapp1",
+        "appSuffix" : "vcap.me",
+        "quotaApp" : null
     },
     "components": [
         {
