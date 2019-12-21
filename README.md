@@ -40,7 +40,7 @@ What resources are registered in a CAF.js local namespace? **Everything**
 Two practical considerations:
 
 * We sometimes use resource names as hostnames and, we need to
-restrict characters to ASCII letters and numbers (see RFC 1123).
+restrict characters to ASCII letters (lower case) and numbers (see RFC 1123).
 
 * We can use the same `caLocalName` in different applications. Therefore, we
 may need to qualify a CA name with its app name to make it globally unique. Applications do not trust each other, and therefore, this is almost never needed.
