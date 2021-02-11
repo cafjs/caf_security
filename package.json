@@ -17,7 +17,8 @@
         "typescript": "3.7.3",
         "@types/node": "12.12.31",
         "@types/jsonwebtoken": "^7.2.5",
-        "jsdoc": "^3.4.2"
+        "jsdoc": "^3.4.2",
+        "docdash": "^1.2.0"
     },
     "main": "index",
     "homepage": "http://www.cafjs.com",
