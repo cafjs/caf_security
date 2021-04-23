@@ -18,9 +18,9 @@ limitations under the License.
 var caf = require('caf_core');
 var json_rpc = caf.caf_transport.json_rpc;
 
-var ADMIN_MAP = 'master';
+var ADMIN_MAP = 'primary';
 
-var masterMap = function(self) {
+var primaryMap = function(self) {
     var name = self.__ca_getName__();
     return json_rpc.joinName(name, ADMIN_MAP);
 };
@@ -38,11 +38,11 @@ exports.methods = {
     "__ca_init__" : function(cb) {
         this.$.log.debug("++++++++++++++++Calling init");
         this.state.pulses = 0;
-        this.$.sharing.addWritableMap('master', ADMIN_MAP);
-        this.$.sharing.addReadOnlyMap('slave', masterMap(this),
+        this.$.sharing.addWritableMap('primary', ADMIN_MAP);
+        this.$.sharing.addReadOnlyMap('replica', primaryMap(this),
                                       {isAggregate: true});
-        this.$.sharing.addWritableMap('masterAux', AUX_MAP);
-        this.$.sharing.addReadOnlyMap('slaveAux', auxMap(this));
+        this.$.sharing.addWritableMap('primaryAux', AUX_MAP);
+        this.$.sharing.addReadOnlyMap('replicaAux', auxMap(this));
 
         cb(null);
     },
@@ -63,24 +63,24 @@ exports.methods = {
     },
     allowWithAggregate: function(method, name, cb) {
         var $$ = this.$.sharing.$;
-        $$.master.set('__link_key__', [auxMap(this)]);
-        $$.masterAux.set(name, true);
-        var rule = this.$.security.newAggregateRule(method, 'slave');
+        $$.primary.set('__link_key__', [auxMap(this)]);
+        $$.primaryAux.set(name, true);
+        var rule = this.$.security.newAggregateRule(method, 'replica');
         cb(null, this.$.security.addRule(rule));
     },
     denyWithAggregate: function(name, cb) {
 
         var $$ = this.$.sharing.$;
-        $$.master.set('__link_key__', []);
+        $$.primary.set('__link_key__', []);
         cb(null, null);
     },
     denyWithAggregateV2: function(name, cb) {
         var $$ = this.$.sharing.$;
-        $$.masterAux.delete(name);
+        $$.primaryAux.delete(name);
         cb(null, null);
     },
      query: function(name, cb) {
         var $$ = this.$.sharing.$;
-        cb(null, $$.slave.getAll(name));
+        cb(null, $$.replica.getAll(name));
     }
 };
