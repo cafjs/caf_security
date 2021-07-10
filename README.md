@@ -5,7 +5,8 @@ Co-design cloud assistants with your web app and IoT devices.
 See https://www.cafjs.com
 
 ## Security Library
-[![Build Status](https://travis-ci.org/cafjs/caf_security.svg?branch=master)](https://travis-ci.org/cafjs/caf_security)
+
+[![Build Status](https://github.com/cafjs/caf_security/actions/workflows/push.yml/badge.svg)](https://github.com/cafjs/caf_security/actions/workflows/push.yml)
 
 This repository contains a `Caf.js` library to add security checks.
 
