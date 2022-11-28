@@ -597,7 +597,7 @@ module.exports = {
         async.waterfall(
             [
                 function(cb) {
-                    s1 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000', from1, {
+                    s1 = new cli.Session('ws://someone1-fooapp1.localtest.me:3000', from1, {
                         token : tk1,
                         from : from1
                     });
@@ -607,7 +607,7 @@ module.exports = {
                 },
                 function(res, cb) {
                     test.equals(res, 'Bye:foo:' + from1);
-                    s2 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000', from1, {
+                    s2 = new cli.Session('ws://someone1-fooapp1.localtest.me:3000', from1, {
                         token : tk2,
                         from : from2
                     });
@@ -621,7 +621,7 @@ module.exports = {
                 },
                 // check only owners can create CAs
                 function(res, cb) {
-                    s2 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000', from2, {
+                    s2 = new cli.Session('ws://someone1-fooapp1.localtest.me:3000', from2, {
                         token : tk1,
                         from : from1
                     });
@@ -640,7 +640,7 @@ module.exports = {
                 function(id, cb) {
                     test.equals(typeof id, 'string');
                     ruleId = id;
-                    s2 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000', from1, {
+                    s2 = new cli.Session('ws://someone1-fooapp1.localtest.me:3000', from1, {
                         token : tk2,
                         from : from2
                     });
@@ -716,7 +716,7 @@ module.exports = {
             [
                 function(cb) {
                     console.log('<1');
-                    s1 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000',
+                    s1 = new cli.Session('ws://someone1-fooapp1.localtest.me:3000',
                                          from3, {
                         token : tk1,
                         from : from3
@@ -740,7 +740,7 @@ module.exports = {
                 },
                 function(res, cb) {
                     console.log('<3');
-                    s2 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000',
+                    s2 = new cli.Session('ws://someone1-fooapp1.localtest.me:3000',
                                          from3, {
                                              token : tk2,
                                              from : from2
@@ -791,7 +791,7 @@ module.exports = {
                 function(res, cb) {
                     console.log('<9');
                     setTimeout(function() {
-                        s2 = new cli.Session('ws://someone1-fooapp1.vcap.me:3000',
+                        s2 = new cli.Session('ws://someone1-fooapp1.localtest.me:3000',
                                              from3, {
                                                  token : tk2,
                                                  from : from2

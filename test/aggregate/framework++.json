@@ -3,7 +3,7 @@
     "env" : {
         "appPublisher" :"someone1",
         "appLocalName" : "fooapp1",
-        "appSuffix" : "vcap.me",
+        "appSuffix" : "localtest.me",
         "quotaApp" : null
     },
     "components": [
@@ -12,7 +12,7 @@
             "module": "../../index.js#plug",
             "env" : {
                 "keysDir": null,
-                "accountsURL" : "ws://accounts.vcap.me:3000",
+                "accountsURL" : "ws://accounts.localtest.me:3000",
                 "trustedPubKeyFile" : "dummy1SelfSigned.pem",
                 "privateKeyFile": "dummy1PrivKey.key",
                 "publicKeyFile" : "dummy1SelfSigned.pem",
